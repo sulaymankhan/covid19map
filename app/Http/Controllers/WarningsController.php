@@ -21,25 +21,29 @@ class WarningsController extends Controller
         if(count($advices) > 0){
             $casesTable = $casesTable->whereIn('advice',$advices);
         }
-        if($r->input('time_start_hour')){
-            $casesTable = $casesTable->where('start_hour','>=',$r->input('time_start_hour'));
+        if($r->input('time_start_hour') && is_numeric($r->input('time_start_hour'))){
+            $casesTable = $casesTable->whereRaw('date_format(start_hour,"%H")>='.$r->input('time_start_hour'));
         }
-        if($r->input('time_finish_hour')){
-            $casesTable = $casesTable->where('finish_hour','<=',$r->input('time_finish_hour'));
+        if($r->input('time_finish_hour') && is_numeric($r->input('time_finish_hour'))){
+            $casesTable = $casesTable->whereRaw('date_format(finish_hour,"%H")<='.$r->input('time_finish_hour'));
         }
         if($r->input('suburb')){
             $casesTable = $casesTable->where('suburb',$r->input('suburb'));
         }
+        if($r->input('date')){
+            $casesTable = $casesTable->where('date',$r->input('date'))->orderBy('date','desc');
+        }
         if($r->input('lgs')){
             $casesTable = $casesTable->where('lgs',$r->input('lgs'));
         }
+      
         $defaultCase=$casesTable->clone()->first() ? $casesTable->clone()->first() :(Object)['lat'=>'','lng'=>''];
         $features = $casesTable->get()->map(function($c) use ($defaultCase){
             return [
                 'type'=>'Feature',
                 'properties'=>[
                     'id'=>$c->id,
-                    'lgas'=>$c->lgas,
+                    'lgas'=>$c->lgs,
                     'advise'=>$c->advice,
                     'suburb'=>$c->suburb,
                     'address'=>$c->address,
@@ -91,5 +95,8 @@ class WarningsController extends Controller
     }
     public function getLgs(){
         return \DB::table('warnings')->selectRaw('lgs,count(id) as total')->orderBy('lgs')->groupBy('lgs')->get()->map(function($m){ return ['total'=>$m->total,'name'=>$m->lgs];});
+    }
+    public function getDays(){
+        return \DB::table('warnings')->selectRaw('date,count(id) as total')->orderBy('lgs')->groupBy('date')->get()->map(function($m){ return ['total'=>$m->total,'name'=>$m->date];});
     }
 }

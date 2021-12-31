@@ -6,6 +6,7 @@ app.controller('AppCtrl',function($scope,$http){
     $scope.totalCases=0;
     $scope.suburbs=[];
     $scope.lgs=[];
+    $scope.dates=[];
     $scope.form={};
     $scope.setSuburbs=function(){
         $http.get("/api/suburbs").then(function(res){
@@ -15,6 +16,11 @@ app.controller('AppCtrl',function($scope,$http){
     $scope.setLgs=function(){
         $http.get("/api/lgs").then(function(res){
             $scope.lgs = res.data;
+        });
+    }
+    $scope.setDates=function(){
+        $http.get("/api/days").then(function(res){
+            $scope.dates = res.data;
         });
     }
     $scope.filterData=function(){
@@ -206,6 +212,7 @@ app.controller('AppCtrl',function($scope,$http){
    $scope.init=function(){
     $scope.setSuburbs();
     $scope.setLgs();
+    $scope.setDates();
     $scope.filterData();
    }
    
