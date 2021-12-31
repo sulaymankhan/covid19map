@@ -47,7 +47,7 @@ app.controller('AppCtrl',function($scope,$http){
                 return L.marker(latlng, {
                     icon: L.icon({
                         iconUrl: feature.properties.icon,
-                        iconSize: [30, 30],
+                        iconSize: [30, 40],
                         iconAnchor: [10, 15],
                     })
                 });

@@ -19,44 +19,44 @@ class WarningsController extends Controller
             $advices[]='Casual';
         }
         if(count($advices) > 0){
-            $casesTable = $casesTable->whereIn('advice',$advices);
+            $casesTable = $casesTable->whereIn('data_advice',$advices);
         }
         if($r->input('time_start_hour') && is_numeric($r->input('time_start_hour'))){
-            $casesTable = $casesTable->whereRaw('date_format(start_hour,"%H")>='.$r->input('time_start_hour'));
+            $casesTable = $casesTable->whereRaw('date_format(data_timestart,"%H")>='.$r->input('time_start_hour'));
         }
         if($r->input('time_finish_hour') && is_numeric($r->input('time_finish_hour'))){
-            $casesTable = $casesTable->whereRaw('date_format(finish_hour,"%H")<='.$r->input('time_finish_hour'));
+            $casesTable = $casesTable->whereRaw('date_format(data_timeend,"%H")<='.$r->input('time_finish_hour'));
         }
         if($r->input('suburb')){
-            $casesTable = $casesTable->where('suburb',$r->input('suburb'));
+            $casesTable = $casesTable->where('data_suburb',$r->input('suburb'));
         }
         if($r->input('date')){
-            $casesTable = $casesTable->where('date',$r->input('date'))->orderBy('date','desc');
+            $casesTable = $casesTable->where('data_date',$r->input('date'))->orderBy('data_date','desc');
         }
-        if($r->input('lgs')){
-            $casesTable = $casesTable->where('lgs',$r->input('lgs'));
+        if($r->input('data_lgas')){
+            $casesTable = $casesTable->where('data_lgas',$r->input('lgs'));
         }
       
-        $defaultCase=$casesTable->clone()->first() ? $casesTable->clone()->first() :(Object)['lat'=>'','lng'=>''];
+        $defaultCase=$casesTable->clone()->first() ? $casesTable->clone()->first() :(Object)['data_latitude'=>'','data_longitude'=>''];
         $features = $casesTable->get()->map(function($c) use ($defaultCase){
             return [
                 'type'=>'Feature',
                 'properties'=>[
-                    'id'=>$c->id,
-                    'lgas'=>$c->lgs,
-                    'advise'=>$c->advice,
-                    'suburb'=>$c->suburb,
-                    'address'=>$c->address,
-                    'date'=>$c->datetext,
-                    'time'=>$c->timetext,
-                    'start_hour'=>$c->start_hour,
-                    'start_hour'=>$c->finish_hour,
+                    'id'=>$c->data_id,
+                    'lgas'=>$c->lags,
+                    'advise'=>$c->data_advice,
+                    'suburb'=>$c->data_suburb,
+                    'address'=>$c->data_address,
+                    'date'=>$c->data_datetext,
+                    'time'=>$c->data_timetext,
+                    'start_hour'=>$c->data_timestart,
+                    'start_hour'=>$c->data_timeend,
                     'isVisible'=>true,
-                    'icon'=>$c->advice == 'Close' ? '/img/red_pointer.png':'/img/yellow_pointer.png',
+                    'icon'=>$c->data_advice == 'Close' ? '/img/red_pointer.png':'/img/yellow_pointer.png',
                 ],
                 'geometry'=>[
                     'type'=>'Point',
-                    'coordinates'=>[  (Double) $c->lng ,(Double) $c->lat ]
+                    'coordinates'=>[   (Double) $c->data_longitude ,(Double) $c->data_latitude ]
                 ]
             ];
         });
@@ -64,7 +64,7 @@ class WarningsController extends Controller
         return [
             'type'=>'FeatureCollection',
             'name'=>'point',
-            'crs'=>['type'=>'name','properties'=>['name'=>'urn:ogc:def:crs:OGC:1.3:CRS84','lat'=>(Double)$defaultCase->lat,'lng'=>(Double) $defaultCase->lng]],
+            'crs'=>['type'=>'name','properties'=>['name'=>'urn:ogc:def:crs:OGC:1.3:CRS84','lat'=>(Double)$defaultCase->data_latitude,'lng'=>(Double) $defaultCase->data_longitude]],
             'features'=>$features
         ];
     }
@@ -74,29 +74,29 @@ class WarningsController extends Controller
         $fakeExit          = \Carbon\Carbon::now()->addMinutes(rand(20,60));
 
         $w                  = new Warning;
-        $w->address         = $r->input('address');
-        $w->suburb          = $r->input('suburb');
-        $w->lat             = $r->input('lat');
-        $w->lng             = $r->input('lng');
-        $w->advice          = $r->input('advice');
-        $w->datetext        = $fakeEntry->format('l d F Y');
+        $w->data_address         = $r->input('address');
+        $w->data_suburb          = $r->input('suburb');
+        $w->data_latitude        = $r->input('lat');
+        $w->data_longitude       = $r->input('lng');
+        $w->data_advice          = $r->input('advice');
+        $w->data_datetext        = $fakeEntry->format('l d F Y');
      
-        $w->timetext        = $fakeEntry->format('g:i A')."-".$fakeExit->format('g:i A');
-        $w->start_hour      = $fakeEntry->format('H');
-        $w->finish_hour     = $fakeExit->format('H');
-
+        $w->data_timetext        = $fakeEntry->format('g:i A')."-".$fakeExit->format('g:i A');
+        $w->data_timestart       = $fakeEntry->format('H');
+        $w->data_timeend         = $fakeExit->format('H');
+        
         $w->save();
         return $w;
     }
   
 
     public function getSuburbs(){
-        return \DB::table('warnings')->selectRaw('suburb,count(id) as total')->orderBy('suburb')->groupBy('suburb')->get()->map(function($m){ return ['total'=>$m->total,'suburb'=>$m->suburb];});
+        return \DB::table('dataqld')->selectRaw('data_suburb,count(data_id) as total')->orderBy('data_suburb')->groupBy('data_suburb')->get()->map(function($m){ return ['total'=>$m->total,'suburb'=>$m->data_suburb];});
     }
     public function getLgs(){
-        return \DB::table('warnings')->selectRaw('lgs,count(id) as total')->orderBy('lgs')->groupBy('lgs')->get()->map(function($m){ return ['total'=>$m->total,'name'=>$m->lgs];});
+        return \DB::table('dataqld')->selectRaw('data_lgas,count(data_id) as total')->orderBy('data_lgas')->groupBy('data_lgas')->get()->map(function($m){ return ['total'=>$m->total,'name'=>$m->data_lgas];});
     }
     public function getDays(){
-        return \DB::table('warnings')->selectRaw('date,count(id) as total')->orderBy('lgs')->groupBy('date')->get()->map(function($m){ return ['total'=>$m->total,'name'=>$m->date];});
+        return \DB::table('dataqld')->selectRaw('data_date,count(data_id) as total')->orderBy('data_date')->groupBy('data_date')->get()->map(function($m){ return ['total'=>$m->total,'name'=>$m->data_date];});
     }
 }
