@@ -177,11 +177,11 @@ app.controller('AppCtrl',function($scope,$http){
        noUiSlider.create(nonLinearSlider, {
            connect: true,
            behaviour: 'tap',
-           start: [1,24],
+           start: [0,24],
            step:1,
            tooltips:true,
            range: {
-               'min': [1],
+               'min': [0],
                'max': [24]
            },
            pips: {

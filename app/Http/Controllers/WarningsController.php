@@ -28,15 +28,16 @@ class WarningsController extends Controller
             $casesTable = $casesTable->whereRaw('date_format(data_timeend,"%H")<='.$r->input('time_finish_hour'));
         }
         if($r->input('suburb')){
+            dd('suburbs');
             $casesTable = $casesTable->where('data_suburb',$r->input('suburb'));
         }
         if($r->input('date')){
             $casesTable = $casesTable->where('data_date',$r->input('date'))->orderBy('data_date','desc');
         }
-        if($r->input('data_lgas')){
+        if($r->input('lgs')){
             $casesTable = $casesTable->where('data_lgas',$r->input('lgs'));
         }
-      
+    //    / dd($casesTable->count());
         $defaultCase=$casesTable->clone()->first() ? $casesTable->clone()->first() :(Object)['data_latitude'=>'','data_longitude'=>''];
         $features = $casesTable->get()->map(function($c) use ($defaultCase){
             return [
