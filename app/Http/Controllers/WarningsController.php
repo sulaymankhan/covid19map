@@ -28,7 +28,7 @@ class WarningsController extends Controller
             $casesTable = $casesTable->whereRaw('date_format(data_timeend,"%H")<='.$r->input('time_finish_hour'));
         }
         if($r->input('suburb')){
-            dd('suburbs');
+          
             $casesTable = $casesTable->where('data_suburb',$r->input('suburb'));
         }
         if($r->input('date')){
