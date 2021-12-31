@@ -62,6 +62,16 @@
                         </select>
                     </div>
                 </div>
+                <div class="row mt-3">
+                    <div class="col-md-8">
+                        <label class="label mb-2"> FILTER BY LGA</label>
+                        <select ng-model="filters.lgs" class="form-control" ng-change="filterData()"
+                            placeholder="Filter">
+                            <option value="">All LGAs</option>
+                            <option ng-repeat="l in lgs" ng-value="l.name">@{{l.name}} (@{{l.total}})</option>
+                        </select>
+                    </div>
+                </div>
                 <!-- FILTER BY TIME -->
                 <div class="mt-3">
                     <label class="label">TIME RANGE</label>

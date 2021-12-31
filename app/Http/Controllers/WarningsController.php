@@ -30,6 +30,9 @@ class WarningsController extends Controller
         if($r->input('suburb')){
             $casesTable = $casesTable->where('suburb',$r->input('suburb'));
         }
+        if($r->input('lgs')){
+            $casesTable = $casesTable->where('lgs',$r->input('lgs'));
+        }
         $defaultCase=$casesTable->clone()->first() ? $casesTable->clone()->first() :(Object)['lat'=>'','lng'=>''];
         $features = $casesTable->get()->map(function($c) use ($defaultCase){
             return [
@@ -85,5 +88,8 @@ class WarningsController extends Controller
 
     public function getSuburbs(){
         return \DB::table('warnings')->selectRaw('suburb,count(id) as total')->orderBy('suburb')->groupBy('suburb')->get()->map(function($m){ return ['total'=>$m->total,'suburb'=>$m->suburb];});
+    }
+    public function getLgs(){
+        return \DB::table('warnings')->selectRaw('lgs,count(id) as total')->orderBy('lgs')->groupBy('lgs')->get()->map(function($m){ return ['total'=>$m->total,'name'=>$m->lgs];});
     }
 }

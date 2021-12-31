@@ -5,10 +5,16 @@ app.controller('AppCtrl',function($scope,$http){
     $scope.filters={};
     $scope.totalCases=0;
     $scope.suburbs=[];
+    $scope.lgs=[];
     $scope.form={};
     $scope.setSuburbs=function(){
         $http.get("/api/suburbs").then(function(res){
             $scope.suburbs = res.data;
+        });
+    }
+    $scope.setLgs=function(){
+        $http.get("/api/lgs").then(function(res){
+            $scope.lgs = res.data;
         });
     }
     $scope.filterData=function(){
@@ -199,6 +205,7 @@ app.controller('AppCtrl',function($scope,$http){
 
    $scope.init=function(){
     $scope.setSuburbs();
+    $scope.setLgs();
     $scope.filterData();
    }
    
