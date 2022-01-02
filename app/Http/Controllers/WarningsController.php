@@ -8,10 +8,9 @@ use App\Models\Warning;
 use App\Http\Requests\NewWarningRequest;
 class WarningsController extends Controller
 {
-    public function index (Request $r){
-        $casesTable = new Warning;
+    public function applyFilters($casesTable,$r){
         $advices=[];
-        
+  
         if($r->input('close') === "true"){
             $advices[]='Close';
         }
@@ -37,7 +36,13 @@ class WarningsController extends Controller
         if($r->input('lgs')){
             $casesTable = $casesTable->where('data_lgas',$r->input('lgs'));
         }
-    //    / dd($casesTable->count());
+      
+        return $casesTable;
+    }
+    public function index (Request $r){
+        $casesTable = new Warning;
+        $casesTable = $this->applyFilters($casesTable,$r);
+
         $defaultCase=$casesTable->clone()->first() ? $casesTable->clone()->first() :(Object)['data_latitude'=>'','data_longitude'=>''];
         $features = $casesTable->get()->map(function($c) use ($defaultCase){
             return [
@@ -91,13 +96,19 @@ class WarningsController extends Controller
     }
   
 
-    public function getSuburbs(){
-        return \DB::table('dataqld')->selectRaw('data_suburb,count(data_id) as total')->orderBy('data_suburb')->groupBy('data_suburb')->get()->map(function($m){ return ['total'=>$m->total,'suburb'=>$m->data_suburb];});
+    public function getSuburbs(Request $r){
+        $casesTable=\DB::table('dataqld')->selectRaw('data_suburb,count(data_id) as total')->orderBy('data_suburb');
+        $casesTable = $this->applyFilters($casesTable,$r);
+        return $casesTable->groupBy('data_suburb')->get()->map(function($m){ return ['total'=>$m->total,'suburb'=>$m->data_suburb];});
     }
-    public function getLgs(){
-        return \DB::table('dataqld')->selectRaw('data_lgas,count(data_id) as total')->orderBy('data_lgas')->groupBy('data_lgas')->get()->map(function($m){ return ['total'=>$m->total,'name'=>$m->data_lgas];});
+    public function getLgs(Request $r){
+        $casesTable=\DB::table('dataqld')->selectRaw('data_lgas,count(data_id) as total')->orderBy('data_lgas');
+        $casesTable = $this->applyFilters($casesTable,$r);
+        return $casesTable->groupBy('data_lgas')->get()->map(function($m){ return ['total'=>$m->total,'name'=>$m->data_lgas];});
     }
-    public function getDays(){
-        return \DB::table('dataqld')->selectRaw('data_date,count(data_id) as total')->orderBy('data_date')->groupBy('data_date')->get()->map(function($m){ return ['total'=>$m->total,'name'=>$m->data_date];});
+    public function getDays(Request $r){
+        $casesTable= \DB::table('dataqld')->selectRaw('data_date,count(data_id) as total')->orderBy('data_date');
+        $casesTable = $this->applyFilters($casesTable,$r);
+        return $casesTable->groupBy('data_date')->get()->map(function($m){ return ['total'=>$m->total,'name'=>$m->data_date];});
     }
 }

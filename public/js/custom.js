@@ -9,17 +9,17 @@ app.controller('AppCtrl',function($scope,$http){
     $scope.dates=[];
     $scope.form={};
     $scope.setSuburbs=function(){
-        $http.get("/api/suburbs").then(function(res){
+        $http.get("/api/suburbs",{params:$scope.filters}).then(function(res){
             $scope.suburbs = res.data;
         });
     }
     $scope.setLgs=function(){
-        $http.get("/api/lgs").then(function(res){
+        $http.get("/api/lgs",{params:$scope.filters}).then(function(res){
             $scope.lgs = res.data;
         });
     }
     $scope.setDates=function(){
-        $http.get("/api/days").then(function(res){
+        $http.get("/api/days",{params:$scope.filters}).then(function(res){
             $scope.dates = res.data;
         });
     }
@@ -31,6 +31,10 @@ app.controller('AppCtrl',function($scope,$http){
             }else{
                 $scope.reDrawMarkers(res.data);
             }
+            
+            $scope.setSuburbs();
+            $scope.setLgs();
+            $scope.setDates();
            
         });
     }
