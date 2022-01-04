@@ -85,7 +85,7 @@ class WarningsController extends Controller
         $w->data_latitude        = $r->input('lat');
         $w->data_longitude       = $r->input('lng');
         $w->data_advice          = $r->input('advice');
-        $w->data_datetext        = $fakeEntry->format('l d F Y');
+        $w->data_datetext        = $fakeEntry->format('Y-m-d');
      
         $w->data_timetext        = $fakeEntry->format('g:i A')."-".$fakeExit->format('g:i A');
         $w->data_timestart       = $fakeEntry->format('H');
