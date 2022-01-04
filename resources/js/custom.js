@@ -82,9 +82,9 @@ app.controller('MarkersCtrl',function($scope,$http){
            L.control.zoom({
                position: 'topright'
            }).addTo(map);              
-       var pod = L.tileLayer('http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png', {
+       var pod = L.tileLayer('https://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png', {
            maxZoom: 18,
-           attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+           attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
        });
        pod.addTo(map);
        
@@ -99,9 +99,9 @@ app.controller('MarkersCtrl',function($scope,$http){
            theMarker = L.marker([lat, lon]).addTo(map);
        });
        
-       var mapycz = L.tileLayer('http://m{s}.mapserver.mapy.cz/base-m/{z}-{x}-{y}', {
+       var mapycz = L.tileLayer('https://m{s}.mapserver.mapy.cz/base-m/{z}-{x}-{y}', {
            ident: 'mapycz',
-           attribution: '&copy;Seznam.cz a.s., | &copy;OpenStreetMap <a href="http://mapy.cz"><img class="print" target="_blank" src="//api.mapy.cz/img/api/logo.png" style="cursor: pointer; position:relative;top: 5px;"></a>',
+           attribution: '&copy;Seznam.cz a.s., | &copy;OpenStreetMap <a href="https://mapy.cz"><img class="print" target="_blank" src="//api.mapy.cz/img/api/logo.png" style="cursor: pointer; position:relative;top: 5px;"></a>',
            maxZoom: 20,
            subdomains: "1234"
        });
