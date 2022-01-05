@@ -1,6 +1,17 @@
 // Create the map
 var map=false;
-var app =angular.module('covid', []);
+var app =angular.module('covid', ['ui.bootstrap','gm','moment-picker']);
+var mapycz = L.tileLayer('https://m{s}.mapserver.mapy.cz/base-m/{z}-{x}-{y}', {
+    ident: 'mapycz',
+    attribution: '&copy;Seznam.cz a.s., | &copy;OpenStreetMap <a href="https://mapy.cz"><img class="print" target="_blank" src="//api.mapy.cz/img/api/logo.png" style="cursor: pointer; position:relative;top: 5px;"></a>',
+    maxZoom: 20,
+    subdomains: "1234"
+});
+var pod = L.tileLayer('https://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png', {
+    ident: 'pod',
+    maxZoom: 18,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+});
 app.controller('AppCtrl',function($scope,$http){
     $scope.filters={};
     $scope.totalCases=0;
@@ -8,6 +19,8 @@ app.controller('AppCtrl',function($scope,$http){
     $scope.lgs=[];
     $scope.dates=[];
     $scope.form={};
+    $scope.viewType='pod';
+    $scope.tableData=[];
     $scope.setSuburbs=function(){
         $http.get("/api/suburbs",{params:$scope.filters}).then(function(res){
             $scope.suburbs = res.data;
@@ -26,6 +39,7 @@ app.controller('AppCtrl',function($scope,$http){
     $scope.filterData=function(){
         $http.get("/api/warnings",{params:$scope.filters}).then(function(res){
             $scope.totalCases=res.data.features.length;
+            $scope.tableData = res.data;
             if(map == false){
                 $scope.drawMap(res.data);
             }else{
@@ -45,7 +59,7 @@ app.controller('AppCtrl',function($scope,$http){
                 layer.remove();
             }
         });
-    
+       
         let markers= L.geoJson(mapData, {
             pointToLayer: function (feature, latlng, ) {
                 return L.marker(latlng, {
@@ -57,7 +71,7 @@ app.controller('AppCtrl',function($scope,$http){
                 });
             },
             onEachFeature: function (feature, layer) {
-                let body="<strong><i class='fa fa-home'></i> Address</strong>:"+feature.properties.address+" "+feature.properties.suburb;
+                let body="<strong><i class='fa fa-home'></i> Address</strong>:"+feature.properties.full_address
                 body=body+"<br><strong><i class='fa fa-calendar'></i> Date</strong>:"+feature.properties.date
                 body=body+"<br><strong><i class='fa fa-clock'></i> Time</strong>:"+feature.properties.time;
                 layer.bindPopup(body, {
@@ -67,6 +81,8 @@ app.controller('AppCtrl',function($scope,$http){
         });
     
         map.addLayer(markers);
+
+        map.setView(new L.LatLng(mapData.crs.properties.lat, mapData.crs.properties.lng, 95));
     }
    
     $scope.drawMap=function(mapData){
@@ -95,10 +111,7 @@ app.controller('AppCtrl',function($scope,$http){
            L.control.zoom({
                position: 'topright'
            }).addTo(map);              
-       var pod = L.tileLayer('http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png', {
-           maxZoom: 18,
-           attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-       });
+    
        pod.addTo(map);
        
        var theMarker = {};
@@ -112,12 +125,7 @@ app.controller('AppCtrl',function($scope,$http){
            theMarker = L.marker([lat, lon]).addTo(map);
        });
        
-       var mapycz = L.tileLayer('http://m{s}.mapserver.mapy.cz/base-m/{z}-{x}-{y}', {
-           ident: 'mapycz',
-           attribution: '&copy;Seznam.cz a.s., | &copy;OpenStreetMap <a href="http://mapy.cz"><img class="print" target="_blank" src="//api.mapy.cz/img/api/logo.png" style="cursor: pointer; position:relative;top: 5px;"></a>',
-           maxZoom: 20,
-           subdomains: "1234"
-       });
+      
        
        var LeafIcon = L.Icon.extend({
            options: {
@@ -128,27 +136,15 @@ app.controller('AppCtrl',function($scope,$http){
            }
        });
        
-       var baseMaps = {
-           "OSM": pod,
-           "<b style=color:red;>M</b><b style=color:black;>APY.CZ": mapycz
-       };
+
        
        var  groupedOverlays = { };
        var  sidebar = L.control.sidebar('sidebar').addTo(map);
             sidebar.open('filtersTab');
        
-       var panel = L.control.groupedLayers(baseMaps, groupedOverlays, {
-           collapsed: false
-       }).addTo(map);
+     
        
-       var htmlObject = panel.getContainer();
-       var a = document.getElementById('mapTypes')
 
-       function setParent(el, newParent) {
-           newParent.appendChild(el);
-
-       }
-       setParent(htmlObject, a);
      
 
        
@@ -227,15 +223,31 @@ app.controller('AppCtrl',function($scope,$http){
     $scope.processing=false;
     $scope.submitForm=function(){
         $scope.processing=true;
-        $http.post("/api/warnings",$scope.form).then((res)=>{
+        $scope.errors=[];
+        var formData = Object.assign({},$scope.form);
+        if(formData.hasOwnProperty('start_time') && typeof formData.start_time =='object'){
+            formData.start_time = formData.start_time.getHours().toString()+":"+formData.start_time.getMinutes().toString();
+            formData.end_time = formData.end_time.getHours().toString()+":"+formData.end_time.getMinutes().toString();
+        }
+        if( typeof formData.location == "object"){
+            formData.location="";
+        }
+        $http.post("/api/warnings",formData).then((res)=>{
 
             $scope.processing=false;
             $scope.form={};
+            $scope.filterData();
+
+            alert("Thank you. The form is submitted successfully!");
             
         },(res)=>{
-
-            $scope.errors = $scope.formatErrors(res.data.errors);
+            console.log('ERROR',res);
             $scope.processing=false;
+            if(res.data.hasOwnProperty('errors')){
+                $scope.errors = $scope.formatErrors(res.data.errors);
+            }
+
+           
         });
     }
 
@@ -249,4 +261,76 @@ app.controller('AppCtrl',function($scope,$http){
   
         return formattedErrors;
     }
+
+    $scope.getAddressByType=function(location,type,shortName=false){
+        for(let l of location.address_components){
+            for(let t of l.types){
+                if(t == type){
+                    if(!shortName){
+                        return l.long_name;
+                    }else{
+                        return l.short_name;
+                    }
+                  
+                }
+            }
+        }
+        return '';
+    }
+   
+    $scope.$on('gmPlacesAutocomplete::placeChanged', function(){
+        var location = $scope.form.location.getPlace();
+       
+        $scope.form.address     =   $scope.getAddressByType(location,'street_number') + " " + $scope.getAddressByType(location,'route');
+        $scope.form.suburb      =   $scope.getAddressByType(location,'locality')
+        $scope.form.state       =   $scope.getAddressByType(location,'administrative_area_level_1',true)
+        var geo=location.geometry.location;
+        $scope.lat = geo.lat();
+        $scope.lng = geo.lng();
+        if(location.hasOwnProperty('business_status')){
+            $scope.form.location = location.name;
+        }else{
+            $scope.form.location = "";
+        }
+        $scope.$apply();
+    });
+    $scope.dateSelector={opened:false};
+    $scope.dateOptions = {
+        dateDisabled: false,
+        formatYear: 'yy',
+        maxDate: new Date(2020, 5, 22),
+        minDate: new Date(),
+        startingDay: 1
+      };
+    $scope.altInputFormats = ['yyyy/mm/dd'];
+    $scope.open = function() {
+        $scope.dateSelector.opened = true;
+        console.log('OPEN',$scope.dateSelector.opened);
+      };
+    $scope.switchView=function(type){
+        $scope.viewType = type;
+        map.eachLayer(function(layer){
+            console.log('TYPE',type);
+            console.log('layer',layer.options);
+            if(layer && layer.hasOwnProperty('options') && layer.options.hasOwnProperty('ident') && layer.options.ident == 'pod' ){
+                if(type == 'mapycz'){
+              
+                    map.removeLayer(layer);
+                    map.addLayer(mapycz);
+                }
+            }
+            if(layer && layer.hasOwnProperty('options') && layer.options.hasOwnProperty('ident') && layer.options.ident == 'mapycz'  ){
+                if(type == 'pod'){
+                    map.removeLayer(layer);
+                    map.addLayer(pod);
+                }
+            }
+       });
+        if(type == 'table'){
+            $("#map").fadeOut();
+        }else{
+            $("#map").fadeIn();
+        }
+    }
+    
 });

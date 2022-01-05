@@ -18,12 +18,13 @@ mix.js([
     'resources/js/leaflet-sidebar.js',
     'resources/js/leaflet.markercluster.js',
     'resources/js/leaflet.groupedlayercontrol.js',
-    'resources/js/wNumb.min.js',
+    'resources/js/ui-bootstrap-tpls-2.5.0.min.js',
+    'resources/js/angular-moment-picker.min.js',
 
 ], 'public/js/scripts.js')
 
 .styles([
     'resources/css/leaflet-sidebar.css',
     'resources/css/nouislider.css',
-    'resources/css/custom.css',
+    'resources/css/angular-moment-picker.min.css',
 ],'public/css/top.css');

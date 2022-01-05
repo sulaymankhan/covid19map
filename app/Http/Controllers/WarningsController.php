@@ -17,6 +17,12 @@ class WarningsController extends Controller
         if($r->input('casual') === "true" ){
             $advices[]='Casual';
         }
+        if($r->input('staff') === "true" ){
+            $advices[]='Staff';
+        }
+        if($r->input('customer') === "true" ){
+            $advices[]='Customer';
+        }
         if(count($advices) > 0){
             $casesTable = $casesTable->whereIn('data_advice',$advices);
         }
@@ -43,7 +49,7 @@ class WarningsController extends Controller
         $casesTable = new Warning;
         $casesTable = $this->applyFilters($casesTable,$r);
 
-        $defaultCase=$casesTable->clone()->first() ? $casesTable->clone()->first() :(Object)['data_latitude'=>'','data_longitude'=>''];
+        $defaultCase=Warning::orderBy('created_at','desc')->first() ? Warning::orderBy('created_at','desc')->first() :(Object)['data_latitude'=>'','data_longitude'=>''];
         $features = $casesTable->get()->map(function($c) use ($defaultCase){
             return [
                 'type'=>'Feature',
@@ -51,14 +57,22 @@ class WarningsController extends Controller
                     'id'=>$c->data_id,
                     'lgas'=>$c->lags,
                     'advise'=>$c->data_advice,
+                    'state'=>$c->state,
                     'suburb'=>$c->data_suburb,
                     'address'=>$c->data_address,
+                    'full_address'=>$c->full_address,
+                    'location'=>$c->data_location,
                     'date'=>$c->data_datetext,
                     'time'=>$c->data_timetext,
-                    'start_hour'=>$c->data_timestart,
-                    'start_hour'=>$c->data_timeend,
+                    'start_time'=>$c->data_timestart,
+                    'end_time'=>$c->data_timeend,
+                    'submitted_by'=>$c->data_submitted_by,
+                    'positive_case_type'=>$c->data_positive_case_type,
+                    'positive_case_date'=>$c->data_positive_case_date,
+                    'source'=>$c->data_source,
+                    'comments'=>$c->data_comments,
                     'isVisible'=>true,
-                    'icon'=>$c->data_advice == 'Close' ? '/img/red_pointer.png':'/img/yellow_pointer.png',
+                    'icon'=>$c->getIcon()
                 ],
                 'geometry'=>[
                     'type'=>'Point',
@@ -76,20 +90,27 @@ class WarningsController extends Controller
     }
    
     public function store(NewWarningRequest $r){
-        $fakeEntry          = \Carbon\Carbon::now();
-        $fakeExit          = \Carbon\Carbon::now()->addMinutes(rand(20,60));
 
-        $w                  = new Warning;
+        $w                       = new Warning;
+        $w->data_date            = $r->input('date');
+        $w->data_advice          = $r->input('advice');
+        $w->data_location        = $r->input('location');
         $w->data_address         = $r->input('address');
         $w->data_suburb          = $r->input('suburb');
-        $w->data_latitude        = $r->input('lat');
-        $w->data_longitude       = $r->input('lng');
-        $w->data_advice          = $r->input('advice');
-        $w->data_datetext        = $fakeEntry->format('Y-m-d');
-     
-        $w->data_timetext        = $fakeEntry->format('g:i A')."-".$fakeExit->format('g:i A');
-        $w->data_timestart       = $fakeEntry->format('H');
-        $w->data_timeend         = $fakeExit->format('H');
+        $w->data_state           = $r->input('state');
+        $w->data_timestart       = $r->input('start_time');
+        $w->data_timeend         = $r->input('end_time');
+        $w->data_datetext        = $r->input('date');
+        $w->data_timetext        = $r->input('start_time')."-".$r->input('end_time');
+        $w->data_comments        = $r->input('comments');
+        $w->data_positive_test_date        = $r->input('positive_case_date');
+        $w->data_positive_test_type        = $r->input('positive_case_type');
+        $w->data_submitted_by     = $r->input('submitted_by');
+        $w->data_email            = $r->input('email');
+        $w->data_source            = $r->input('source');
+        $w->setCoordinates();
+       // dd($w);
+
         
         $w->save();
         return $w;

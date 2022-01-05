@@ -19,3 +19,12 @@ body,
     font-size: 120%;
     color: red;
 }
+.pac-container {
+    z-index: 3000 !important;
+}
+.moment-picker{
+    z-index: 3000 !important;
+}
+.uib-time input{
+    width:100% !important;
+}
