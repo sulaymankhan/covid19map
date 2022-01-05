@@ -22,8 +22,11 @@ class Warning extends Model{
         $response = Http::get($url);
         if($response->status()==200){
             $response= $response->object();
-            $lat = isset($response->results[0]->geometry->location->lat) ? $response->results[0]->geometry->location->lat : "";
-            $lng = isset($response->results[0]->geometry->location->lng) ? $response->results[0]->geometry->location->lng : "";
+            $lat = isset($response->results[0]->geometry->location->lat) ? $response->results[0]->geometry->location->lat : false;
+            $lng = isset($response->results[0]->geometry->location->lng) ? $response->results[0]->geometry->location->lng : false;
+            if(!$lat){
+                return false;
+            }
             return (Object) ['lat'=>$lat,'lng'=>$lng];
         }
        return false;
