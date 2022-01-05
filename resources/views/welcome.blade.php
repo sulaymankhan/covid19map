@@ -6,7 +6,7 @@
             <ul role="tablist">
                 <li><a href="#filtersTab" role="tab"><i class="fa fa-bars"></i></a></li>
                 <li><a href="#infoTab" role="tab"><i class="fas fa-info"></i></a></li>
-                <li><a href="#formTab" role="tab"><i class="fab fa-wpforms"></i></a></li>
+                <li><a href="#formTab" role="tab"><i class="fa fa-plus"></i></a></li>
             </ul>
         </div>
         <div class="sidebar-content"  >
