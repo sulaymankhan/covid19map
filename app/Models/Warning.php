@@ -63,7 +63,6 @@ class Warning extends Model{
                 return '/img/green_pointer.png';
                 break;
         }
-        return $icon;
     }
 
 }
