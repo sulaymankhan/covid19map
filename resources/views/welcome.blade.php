@@ -154,6 +154,7 @@
                 
                 <div class="form" style="width: 15vw; color:rgb(220,31,37)">
                     <form method="post" ng-submit="submitForm()">
+                    <label>Date</label>
                     <div class="input-group"
                         moment-picker="form.date"
                         format="YYYY-MM-DD">

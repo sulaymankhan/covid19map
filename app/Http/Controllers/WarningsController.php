@@ -50,7 +50,7 @@ class WarningsController extends Controller
         $casesTable = $this->applyFilters($casesTable,$r);
 
         $defaultCase=Warning::orderBy('created_at','desc')->first() ? Warning::orderBy('created_at','desc')->first() :(Object)['data_latitude'=>'','data_longitude'=>''];
-        $features = $casesTable->get()->map(function($c) use ($defaultCase){
+        $features = $casesTable->orderBy('created_at','desc')->get()->map(function($c) use ($defaultCase){
             return [
                 'type'=>'Feature',
                 'properties'=>[
