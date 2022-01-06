@@ -57,7 +57,7 @@ class WarningsController extends Controller
                     'id'=>$c->data_id,
                     'lgas'=>$c->lags,
                     'advise'=>$c->data_advice,
-                    'state'=>$c->state,
+                    'state'=>$c->data_state,
                     'suburb'=>$c->data_suburb,
                     'address'=>$c->data_address,
                     'full_address'=>$c->full_address,

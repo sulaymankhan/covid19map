@@ -38,7 +38,7 @@ class NewWarningRequest extends FormRequest
             'advice'=>'required',
             'start_time'=>'required',
             'end_time'=>'required',
-           'comments'=>'required|max:150',
+            'comments'=>'max:150',
             'source'=>'required',
             'positive_case_date'=>'required|date_format:Y-m-d',
             'positive_case_type'=>'required',

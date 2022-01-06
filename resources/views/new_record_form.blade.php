@@ -5,7 +5,7 @@
 
 <div class="form" style="width:100%;padding-right:5%; color:rgb(220,31,37)">
     <form method="post" ng-submit="submitForm()">
-        <label>Date</label>
+        <label>Date <span class="required">*</span></label>
         <div class="input-group" moment-picker="form.date" format="YYYY-MM-DD">
             <span class="input-group-addon">
                 <i class="octicon octicon-calendar"></i>
@@ -15,7 +15,7 @@
         </div>
 
         <div class="form-group">
-            <label>Type Of Contact</label>
+            <label>Type Of Contact <span class="required">*</span> </label>
             <select class="form-control" ng-model="form.advice">
                 <option value=""></option>
                 <option value="Close">Close Contact</option>
@@ -25,11 +25,11 @@
             </select>
         </div>
         <div class="form-group">
-            <label> Location </label>
+            <label> Location <span class="required">*</span></label>
             <input type="text" gm-places-autocomplete ng-model="form.location" class="form-control" />
         </div>
         <div class="form-group">
-            <label> Address </label>
+            <label> Address <span class="required">*</span></label>
             <input type="text" ng-model="form.address" value="" class="form-control">
         </div>
         <div class="form-group">
@@ -37,7 +37,7 @@
             <input type="text" ng-model="form.suburb" value="" class="form-control">
         </div>
         <div class="form-group">
-            <label> State </label>
+            <label> State <span class="required">*</span></label>
             <select class="form-control" ng-model="form.state">
                 <option value=""></option>
                 <option value="NSW">NSW</option>
@@ -52,12 +52,12 @@
             </select>
         </div>
         <div class="form-group">
-            <label>Time From</label>
+            <label>Time From <span class="required">*</span></label>
             <div uib-timepicker ng-model="form.start_time" hour-step="1" minute-step="1" show-meridian="false"
                 show-spinners="true"></div>
         </div>
         <div class="form-group">
-            <label>Time To</label>
+            <label>Time To <span class="required">*</span></label>
             <div uib-timepicker ng-model="form.end_time" hour-step="1" minute-step="1" show-meridian="false"
                 show-spinners="true"></div>
         </div>
@@ -70,7 +70,7 @@
             <input type="text" ng-model="form.source" class="form-control">
         </div>
         <div class="form-group">
-            <label>Positive Case Date</label>
+            <label>Positive Case Date <span class="required">*</span></label>
             <div class="input-group" moment-picker="form.positive_case_date" format="YYYY-MM-DD">
                 <span class="input-group-addon">
                     <i class="octicon octicon-calendar"></i>
@@ -80,7 +80,7 @@
             </div>
         </div>
         <div class="form-group">
-            <label>Positive Case Type</label>
+            <label>Positive Case Type <span class="required">*</span></label>
             <select class="form-control" ng-model="form.positive_case_type">
                 <option value=""></option>
                 <option value="PCR">PCR</option>
@@ -88,11 +88,11 @@
             </select>
         </div>
         <div class="form-group">
-            <label>Submitted By (your name)</label>
+            <label>Submitted By (your name) <span class="required">*</span></label>
             <input type="text" ng-model="form.submitted_by" class="form-control">
         </div>
         <div class="form-group">
-            <label>Email</label>
+            <label>Email <span class="required">*</span></label>
             <input type="text" ng-model="form.email" class="form-control">
             <label>Email will not be shown in results</label>
             <label>Email is used to track multiple venues</label>
