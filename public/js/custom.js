@@ -18,27 +18,12 @@ app.controller('AppCtrl',function($scope,$http){
    
     $scope.filters={};
     $scope.totalCases=0;
-    $scope.suburbs=[];
-    $scope.lgs=[];
-    $scope.dates=[];
+  
     $scope.form={};
     $scope.viewType='pod';
     $scope.tableData=[];
-    $scope.setSuburbs=function(){
-        $http.get("/api/suburbs",{params:$scope.filters}).then(function(res){
-            $scope.suburbs = res.data;
-        });
-    }
-    $scope.setLgs=function(){
-        $http.get("/api/lgs",{params:$scope.filters}).then(function(res){
-            $scope.lgs = res.data;
-        });
-    }
-    $scope.setDates=function(){
-        $http.get("/api/days",{params:$scope.filters}).then(function(res){
-            $scope.dates = res.data;
-        });
-    }
+   
+   
     $scope.filterData=function(){
         $http.get("/api/warnings",{params:$scope.filters}).then(function(res){
             $scope.totalCases=res.data.features.length;
@@ -49,9 +34,7 @@ app.controller('AppCtrl',function($scope,$http){
                 $scope.reDrawMarkers(res.data);
             }
             
-            $scope.setSuburbs();
-            $scope.setLgs();
-            $scope.setDates();
+           
            
         });
     }
@@ -215,9 +198,7 @@ app.controller('AppCtrl',function($scope,$http){
         $scope.popup.toggle();
    }
    $scope.init=function(){
-    $scope.setSuburbs();
-    $scope.setLgs();
-    $scope.setDates();
+
     $scope.filterData();
     $scope.togglePopup();
    }

@@ -101,7 +101,7 @@
                         <select ng-model="filters.suburb" class="form-control" ng-change="filterData()"
                             placeholder="Filter">
                             <option value="">All Suburbs</option>
-                            <option ng-repeat="s in suburbs" ng-value="s.suburb">@{{s.suburb}} (@{{s.total}})</option>
+                            <option ng-repeat="s in tableData.suburbs" ng-value="s.suburb">@{{s.suburb}} (@{{s.total}})</option>
                         </select>
                     </div>
                 </div>
@@ -112,7 +112,7 @@
                         <select ng-model="filters.lgs" class="form-control" ng-change="filterData()"
                             placeholder="Filter">
                             <option value="">All LGAs</option>
-                            <option ng-repeat="l in lgs" ng-value="l.name">@{{l.name}} (@{{l.total}})</option>
+                            <option ng-repeat="l in tableData.lgs" ng-value="l.name">@{{l.name}} (@{{l.total}})</option>
                         </select>
                     </div>
                 </div>
@@ -123,7 +123,7 @@
                         <select ng-model="filters.date" class="form-control" ng-change="filterData()"
                             placeholder="Filter">
                             <option value="">All Dates</option>
-                            <option ng-repeat="l in dates" ng-value="l.name">@{{l.name}} (@{{l.total}})</option>
+                            <option ng-repeat="l in tableData.days" ng-value="l.name">@{{l.name}} (@{{l.total}})</option>
                         </select>
                     </div>
                 </div>

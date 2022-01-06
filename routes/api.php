@@ -16,6 +16,4 @@ use App\Http\Controllers\WarningsController;
 */
 
 Route::resource("warnings",WarningsController::class);
-Route::get("/suburbs",[WarningsController::class, 'getSuburbs']);
-Route::get("/lgs",[WarningsController::class, 'getLgs']);
-Route::get("/days",[WarningsController::class, 'getDays']);
+

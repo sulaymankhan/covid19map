@@ -85,7 +85,10 @@ class WarningsController extends Controller
             'type'=>'FeatureCollection',
             'name'=>'point',
             'crs'=>['type'=>'name','properties'=>['name'=>'urn:ogc:def:crs:OGC:1.3:CRS84','lat'=>(Double)$defaultCase->data_latitude,'lng'=>(Double) $defaultCase->data_longitude]],
-            'features'=>$features
+            'features'=>$features,
+            'suburbs'=>$this->getSuburbs($r),
+            'lgs'=>$this->getLgs($r),
+            'days'=>$this->getDays($r),
         ];
     }
    
