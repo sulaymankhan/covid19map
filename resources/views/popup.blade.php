@@ -2,7 +2,7 @@
 <div class="modal fade" id="popup" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true" >
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
-      <div class="modal-header" style="background-color:red;color:white">
+      <div class="modal-header" style="background-color:#dc1f25;color:white">
         <h5 class="modal-title" id="exampleModalLongTitle">Disclaimer</h5>
       
       </div>
