@@ -13,6 +13,9 @@ var pod = L.tileLayer('https://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png',
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 });
 app.controller('AppCtrl',function($scope,$http){
+    $scope.popup = new bootstrap.Modal(document.getElementById('popup'), {backdrop: 'static',
+    keyboard: false});
+   
     $scope.filters={};
     $scope.totalCases=0;
     $scope.suburbs=[];
@@ -139,8 +142,8 @@ app.controller('AppCtrl',function($scope,$http){
 
        
        var  groupedOverlays = { };
-       var  sidebar = L.control.sidebar('sidebar').addTo(map);
-            sidebar.open('filtersTab');
+    
+           
        
      
        
@@ -208,12 +211,15 @@ app.controller('AppCtrl',function($scope,$http){
           });
        });
    }
-
+   $scope.togglePopup=function(){
+        $scope.popup.toggle();
+   }
    $scope.init=function(){
     $scope.setSuburbs();
     $scope.setLgs();
     $scope.setDates();
     $scope.filterData();
+    $scope.togglePopup();
    }
    
    $scope.init();
@@ -333,4 +339,10 @@ app.controller('AppCtrl',function($scope,$http){
         }
     }
     
+   
+    $scope.agree=function(){
+        var  sidebar = L.control.sidebar('sidebar').addTo(map);
+        sidebar.open('filtersTab');
+        $scope.popup.hide();
+    }
 });

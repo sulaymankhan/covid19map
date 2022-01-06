@@ -28,3 +28,6 @@ body,
 .uib-time input{
     width:100% !important;
 }
+.modal{
+    z-index: 4000!important;
+}
